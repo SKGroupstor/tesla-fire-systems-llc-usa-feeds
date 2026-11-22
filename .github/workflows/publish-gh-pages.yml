@@ -1,0 +1,22 @@
+name: Publish to GitHub Pages
+
+# GitHub Pages serves this repo from the gh-pages branch (custom domain set by CNAME).
+# Every push to main is mirrored to gh-pages so the live feeds always match main.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Mirror main to gh-pages
+        run: git push --force origin HEAD:refs/heads/gh-pages
