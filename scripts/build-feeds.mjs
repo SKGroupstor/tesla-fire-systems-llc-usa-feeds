@@ -38,7 +38,10 @@ const stripHtml = (h = '') => decode(
   .replace(SEP, ' ').replace(/ /g, ' ').replace(/[ \t]+/g, ' ').replace(/\s*\n\s*/g, '\n').trim();
 const cleanTitle = (s) => decode(s).replace(SEP, ' ').replace(/\[\[|\]\]/g, '').replace(/\s{2,}/g, ' ').trim();
 const money = (minor, unit, cur) => (Number(minor) / 10 ** unit).toFixed(2) + ' ' + cur;
-const pathOf = (u) => { try { return new URL(u).pathname.replace(/\/?$/, '/'); } catch { return ''; } };
+// Product path used to match store products to feed rows. Decoded and lower-cased so that
+// "…/co₂-…/" and "…/co%e2%82%82-…/" compare equal.
+const pathOf = (u) => { try { const p = new URL(u).pathname; let d = p; try { d = decodeURIComponent(p); } catch {} return d.toLowerCase().replace(/\/?$/, '/'); } catch { return ''; } };
+const urlPath = (u) => { try { return new URL(u).pathname; } catch { return ''; } };
 const directImage = (src, base) => { const m = (src || '').match(/wp-content\/uploads\/([^?]+)/); return m ? `${base}/wp-content/uploads/${m[1]}` : src; };
 const jpgOrPng = (u) => /\.(jpe?g|png)$/i.test(u);
 const attr = (p, name) => decode((p.attributes || []).find((a) => a.name.toLowerCase() === name)?.terms?.map((t) => t.name).join(', ') || '');
@@ -125,7 +128,7 @@ function normalize(p, cfg) {
   const brand = brandOf(p, title, cfg.fallbackBrand);
   const cats = (p.categories || []).map((c) => decode(c.name));
   return {
-    id: p.id, sku: p.sku || '', title, desc, url: cfg.store + pathOf(p.permalink), path: pathOf(p.permalink), imgs, brand,
+    id: p.id, sku: p.sku || '', title, desc, url: cfg.store + urlPath(p.permalink), path: pathOf(p.permalink), imgs, brand,
     cur, regular: reg > 0 ? money(reg, unit, cur) : '', sale: p.on_sale && sale > 0 && sale < reg ? money(sale, unit, cur) : '',
     status: p.is_on_backorder ? 'backorder' : p.is_in_stock ? 'in_stock' : 'out_of_stock',
     category: cats.find((c) => !/[éèêîôçà]/i.test(c) && c !== brand) || cats[0] || '',
@@ -195,7 +198,7 @@ function buildPrimary(items, g, state) {
   const { cols, rows } = parseCsv(readFileSync(g.file, 'utf8'));
   const byPath = new Map(items.map((it) => [it.path, it]));
   const out = []; const seen = new Set();
-  const fill = (base, it) => ({ ...base, title: it.title.slice(0, 150), description: it.desc, link: it.url, image_link: it.imgs[0] || base.image_link,
+  const fill = (base, it) => ({ ...base, title: it.title.slice(0, 150), description: it.desc.replace(/\n+/g, ' '), link: it.url, image_link: it.imgs[0] || base.image_link,
     availability: it.status === 'backorder' ? 'backorder' : it.status, price: it.regular, sale_price: it.sale, brand: it.brand,
     condition: 'new', shipping_weight: it.weightLb || base.shipping_weight });
   for (const r of rows) {
