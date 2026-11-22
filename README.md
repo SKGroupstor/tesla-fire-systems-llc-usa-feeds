@@ -23,6 +23,22 @@ Raw fallback URLs (if GitHub Pages is ever down): replace `https://data.teslafir
 - OpenAI Ads Manager takes the feed by **SFTP upload** (Tools → Feeds → Create Feed). The URLs are for download and reference.
 - Feed settings and notes: [`open ai/README.md`](open%20ai/README.md).
 
+## Automatic updates
+
+All feeds in this repo rebuild themselves from the live store. Nothing needs to be uploaded by hand.
+
+| When | What happens |
+|---|---|
+| **Daily** (~3:23 AM Toronto) | Crawls the store's public catalog (WooCommerce Store API) and rebuilds every feed. If anything changed (price, sale price, stock, title, description, images, new or removed products) the feeds are committed and republished. If nothing changed, nothing is committed. |
+| **Weekly** (Mondays ~4:47 AM Toronto) | Forced refresh. Rebuilds and republishes the feeds and stamps `feed-status.json` even if nothing changed. |
+| **On demand** | Actions tab → *Update feeds* → *Run workflow* (tick *force* for a weekly-style refresh). |
+
+- Code: `scripts/build-feeds.mjs` (Node 20, no dependencies), settings: `feeds.config.json`, workflow: `.github/workflows/update-feeds.yml`.
+- `feed-status.json` shows when the feeds last changed, the last weekly refresh, and product counts.
+- Google feed rows keep their curated settings (ids, pickup settings, GTIN/MPN); prices, stock and text come from the store. Products deleted from the store are removed; products published after 2026-11-22 are added automatically.
+- If the store returns fewer than 50 products (outage, block), the run stops without touching the feeds.
+- Every automated change is a commit, so any earlier version can be restored from the git history.
+
 ## Hosting
 - GitHub Pages from the `main` branch root, custom domain `data.teslafire.com` (set by the `CNAME` file).
 - DNS (Hostinger): `CNAME data → skgroupstor.github.io`.
@@ -33,8 +49,14 @@ Raw fallback URLs (if GitHub Pages is ever down): replace `https://data.teslafir
 ├── CNAME                                  data.teslafire.com
 ├── google-merchant-feed-llc.csv           Google primary product feed (120 rows)
 ├── open ai/                               ChatGPT (OpenAI) Ads feed (153 products, USD)
+├── scripts/build-feeds.mjs                rebuilds all feeds from the live store
+├── feeds.config.json                      store, country, seller and feed file settings
+├── feed-status.json                       last change / last weekly refresh / product counts
 ├── backups/                               dated snapshots of the LLC feed
-└── .github/workflows/backup-on-update.yml backs up the pre-push version of any modified file into backups/
+└── .github/workflows/
+    ├── update-feeds.yml                   daily crawl + weekly refresh
+    ├── publish-gh-pages.yml               mirrors main to gh-pages (the Pages branch)
+    └── backup-on-update.yml               backs up the pre-push version of hand-edited files into backups/
 ```
 
 Moved here from `SKGroupstor/tesla-merchant-centre` on 2026-11-22.
