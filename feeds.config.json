@@ -1,0 +1,15 @@
+{
+  "store": "https://teslafire.com",
+  "country": "US",
+  "sellerName": "Tesla Fire Systems LLC",
+  "fallbackBrand": "Tesla Fire Systems",
+  "minProducts": 50,
+  "openai": {
+    "jsonl": "open ai/teslafire_openai_feed.jsonl",
+    "csv": "open ai/teslafire_openai_feed.csv"
+  },
+  "google": {
+    "type": "primary",
+    "file": "google-merchant-feed-llc.csv"
+  }
+}
