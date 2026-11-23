@@ -29,7 +29,7 @@ All feeds in this repo rebuild themselves from the live store. Nothing needs to 
 
 | When | What happens |
 |---|---|
-| **Daily** (~3:17 AM Toronto) | Crawls the store's public catalog (WooCommerce Store API) and rebuilds every feed. If anything changed (price, sale price, stock, title, description, images, new or removed products) the feeds are committed and republished. If nothing changed, nothing is committed. |
+| **Daily**, three checks (~3:17 AM, ~10:17 AM, ~4:17 PM Toronto) | Crawls the store's public catalog (WooCommerce Store API) and rebuilds every feed. If anything changed (price, sale price, stock, title, description, images, new or removed products) the feeds are committed and republished. If nothing changed, nothing is committed. |
 | **Weekly** (Mondays ~4:41 AM Toronto) | Forced refresh. Rebuilds and republishes the feeds and stamps `feed-status.json` even if nothing changed. |
 | **On demand** | Actions tab → *Update feeds* → *Run workflow* (tick *force* for a weekly-style refresh). |
 

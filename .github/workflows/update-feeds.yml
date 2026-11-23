@@ -6,7 +6,7 @@ name: Update feeds
 
 on:
   schedule:
-    - cron: "17 8 * * *"   # daily, ~3:17 AM Toronto
+    - cron: "17 8,15,21 * * *"   # three checks a day: ~3:17 AM, ~10:17 AM, ~4:17 PM Toronto
     - cron: "41 9 * * 1"   # weekly forced refresh, Mondays ~4:41 AM Toronto
   workflow_dispatch:
     inputs:
