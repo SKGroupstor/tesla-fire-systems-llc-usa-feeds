@@ -178,7 +178,8 @@ function buildLocalInventory(items, g, state) {
     const it = byId.get(pid);
     if (!it || !it.regular) continue;
     seen.add(pid);
-    out.push({ ...r, availability: it.status === 'in_stock' ? 'in_stock' : 'out_of_stock', price: it.regular, sale_price: it.sale,
+    // Offers from the Google Listings & Ads plugin are always gla_<WooCommerce product id>.
+    out.push({ ...r, id: `gla_${pid}`, availability: it.status === 'in_stock' ? 'in_stock' : 'out_of_stock', price: it.regular, sale_price: it.sale,
       sku_reference: it.sku || '(no SKU)', product_name_reference: it.title, product_url_reference: it.url });
   }
   for (const it of items) {
