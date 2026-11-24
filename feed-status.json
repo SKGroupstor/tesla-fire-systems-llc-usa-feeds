@@ -1,11 +1,11 @@
 {
   "store": "https://teslafire.com",
-  "last_change": "2026-11-23T12:32:15.438Z",
+  "last_change": "2026-11-24T02:37:29.807Z",
   "last_weekly_refresh": null,
   "last_changed_files": [
-    "google-merchant-feed-llc.csv",
-    "open ai/teslafire_openai_feed.jsonl",
-    "open ai/teslafire_openai_feed.csv"
+    "open ai/teslafire_openai_feed.csv",
+    "open ai/teslafire_openai_feed.tsv",
+    "open ai/teslafire_openai_feed.txt"
   ],
   "products_in_store": 153,
   "openai_products": 153,
