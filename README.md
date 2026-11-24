@@ -26,17 +26,20 @@ Raw fallback URLs (if GitHub Pages is ever down): replace `https://data.teslafir
 
 ## Automatic updates
 
-All feeds in this repo rebuild themselves from the live store. Nothing needs to be uploaded by hand.
+All feeds in this repo rebuild themselves from the live store (WooCommerce Store API). A run only commits when something changed: price, sale price, stock, title, description, images, new or removed products.
 
 | When | What happens |
 |---|---|
-| **Daily**, three checks (~3:17 AM, ~10:17 AM, ~4:17 PM Toronto) | Crawls the store's public catalog (WooCommerce Store API) and rebuilds every feed. If anything changed (price, sale price, stock, title, description, images, new or removed products) the feeds are committed and republished. If nothing changed, nothing is committed. |
-| **Weekly** (Mondays ~4:41 AM Toronto) | Forced refresh. Rebuilds and republishes the feeds and stamps `feed-status.json` even if nothing changed. |
+| **Before the Merchant Center deadline (12:00 AM EST)** | 10:17 PM and 11:17 PM Toronto: rebuild and republish if anything changed. The second run is a safety net. |
+| **Daytime checks** | 10:17 AM and 4:17 PM Toronto. |
+| **Weekly forced refresh** | Sundays 10:41 PM Toronto: republishes and stamps `feed-status.json` even if nothing changed. |
 | **On demand** | Actions tab → *Update feeds* → *Run workflow* (tick *force* for a weekly-style refresh). |
 
-- Code: `scripts/build-feeds.mjs` (Node 20, no dependencies), settings: `feeds.config.json`, workflow: `.github/workflows/update-feeds.yml`.
+- **Primary trigger:** the Cloudflare Worker `skgroups-monitor-scheduler` (SK GROUPS account) starts the *Update feeds* workflow on time (Toronto time, EST/EDT handled automatically).
+- **Backup trigger:** the GitHub cron in `.github/workflows/update-feeds.yml` runs ~30 minutes after each Cloudflare time. A second run finds no changes and does nothing.
+- Code: `scripts/build-feeds.mjs` (Node 20, no dependencies); settings: `feeds.config.json`.
 - `feed-status.json` shows when the feeds last changed, the last weekly refresh, and product counts.
-- Google feed rows keep their curated settings (ids, pickup settings, GTIN/MPN); prices, stock and text come from the store. Products deleted from the store are removed; products published after 2026-11-22 are added automatically.
+- Google feed rows keep their curated settings (ids, pickup settings, GTIN/MPN); prices, stock and text come from the store. Deleted products are removed; products published after 2026-11-22 are added automatically.
 - If the store returns fewer than 50 products (outage, block), the run stops without touching the feeds.
 - Every automated change is a commit, so any earlier version can be restored from the git history.
 
