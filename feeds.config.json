@@ -6,7 +6,9 @@
   "minProducts": 50,
   "openai": {
     "jsonl": "open ai/teslafire_openai_feed.jsonl",
-    "csv": "open ai/teslafire_openai_feed.csv"
+    "csv": "open ai/teslafire_openai_feed.csv",
+    "tsv": "open ai/teslafire_openai_feed.tsv",
+    "txt": "open ai/teslafire_openai_feed.txt"
   },
   "google": {
     "type": "primary",

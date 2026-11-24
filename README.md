@@ -9,8 +9,9 @@ This repo holds the US feeds for Google Merchant Center and ChatGPT (OpenAI) Ads
 | Feed | Platform | File | Public URL |
 |---|---|---|---|
 | Primary product feed | Google Merchant Center | `google-merchant-feed-llc.csv` | https://data.teslafire.com/google-merchant-feed-llc.csv |
-| Product feed (upload file) | ChatGPT (OpenAI) Ads | `open ai/teslafire_openai_feed.jsonl` | https://data.teslafire.com/open%20ai/teslafire_openai_feed.jsonl |
-| Product feed (review copy) | ChatGPT (OpenAI) Ads | `open ai/teslafire_openai_feed.csv` | https://data.teslafire.com/open%20ai/teslafire_openai_feed.csv |
+| Product feed — **hosted URL for Ads Manager** | ChatGPT (OpenAI) Ads | `open ai/teslafire_openai_feed.tsv` | https://data.teslafire.com/open%20ai/teslafire_openai_feed.tsv |
+| Product feed — manual upload (TXT / CSV) | ChatGPT (OpenAI) Ads | `open ai/teslafire_openai_feed.txt`, `.csv` | https://data.teslafire.com/open%20ai/teslafire_openai_feed.txt |
+| Product feed — SFTP / API | ChatGPT (OpenAI) Ads | `open ai/teslafire_openai_feed.jsonl` | https://data.teslafire.com/open%20ai/teslafire_openai_feed.jsonl |
 
 Raw fallback URLs (if GitHub Pages is ever down): replace `https://data.teslafire.com/` with `https://raw.githubusercontent.com/SKGroupstor/tesla-fire-systems-llc-usa-feeds/main/`.
 
@@ -20,7 +21,7 @@ Raw fallback URLs (if GitHub Pages is ever down): replace `https://data.teslafir
 
 ### ChatGPT (OpenAI) Ads
 - 153 products, prices in USD, `target_countries: ["US"]`, seller Tesla Fire Systems LLC.
-- OpenAI Ads Manager takes the feed by **SFTP upload** (Tools → Feeds → Create Feed). The URLs are for download and reference.
+- In Ads Manager (Tools → Feeds → ⋮) use **Hosted URL** with the `.tsv` link so it refreshes automatically, or **Upload CSV or TXT** with the `.txt`/`.csv` file. The `.jsonl` is for SFTP/API only.
 - Feed settings and notes: [`open ai/README.md`](open%20ai/README.md).
 
 ## Automatic updates

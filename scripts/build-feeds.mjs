@@ -54,7 +54,12 @@ const validGtin = (g) => {
 
 // CSV
 const csvCell = (v) => { if (v == null) return ''; v = Array.isArray(v) ? v.join(',') : typeof v === 'boolean' ? String(v) : String(v); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
-const toCsv = (cols, rows) => '﻿' + [cols.join(','), ...rows.map((r) => cols.map((c) => csvCell(r[c])).join(','))].join('\r\n') + '\r\n';
+const toCsv = (cols, rows) => '\ufeff' + [cols.join(','), ...rows.map((r) => cols.map((c) => csvCell(r[c])).join(','))].join('\r\n') + '\r\n';
+// OpenAI Ads Manager: plain UTF-8 (no BOM), one physical line per product, lowercase booleans,
+// lists as comma-separated values. TSV is what Ads Manager's hosted-URL option accepts reliably.
+const flat = (v) => (v == null ? '' : Array.isArray(v) ? v.join(',') : String(v)).replace(/[\r\n\t]+/g, ' ').trim();
+const toOpenAICsv = (cols, rows) => [cols.join(','), ...rows.map((r) => cols.map((c) => csvCell(flat(r[c]))).join(','))].join('\n') + '\n';
+const toTsv = (cols, rows) => [cols.join('\t'), ...rows.map((r) => cols.map((c) => flat(r[c])).join('\t'))].join('\n') + '\n';
 function parseCsv(text) {
   text = text.replace(/^﻿/, '');
   const rows = []; let row = [], f = '', q = false;
@@ -243,7 +248,9 @@ if (g) {
 const ids = identifiersFromGoogle(g);
 const oa = buildOpenAI(items, CONFIG, ids);
 writeIfChanged(CONFIG.openai.jsonl, oa.map((o) => JSON.stringify(o)).join('\n') + '\n');
-writeIfChanged(CONFIG.openai.csv, toCsv(OPENAI_COLS, oa.map((o) => ({ ...o }))));
+writeIfChanged(CONFIG.openai.csv, toOpenAICsv(OPENAI_COLS, oa));
+writeIfChanged(CONFIG.openai.tsv, toTsv(OPENAI_COLS, oa));
+writeIfChanged(CONFIG.openai.txt, toTsv(OPENAI_COLS, oa));
 console.log(`  OpenAI: ${oa.length} products`);
 
 // Every product id now in the store becomes "known", so new products are only added once.

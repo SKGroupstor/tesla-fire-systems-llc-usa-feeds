@@ -3,9 +3,11 @@
 Product feed for OpenAI Ads Manager (US), built from the live WooCommerce catalog at https://teslafire.com.
 
 ## Links
-- JSONL (upload file): https://data.teslafire.com/open%20ai/teslafire_openai_feed.jsonl
-- CSV (review copy): https://data.teslafire.com/open%20ai/teslafire_openai_feed.csv
-- Raw fallback: https://raw.githubusercontent.com/SKGroupstor/tesla-fire-systems-llc-usa-feeds/main/open%20ai/teslafire_openai_feed.jsonl
+- **Hosted URL for Ads Manager (recommended):** https://data.teslafire.com/open%20ai/teslafire_openai_feed.tsv
+- Manual upload (Upload CSV or TXT): `teslafire_openai_feed.txt` (tab-delimited) or `teslafire_openai_feed.csv`
+- TXT: https://data.teslafire.com/open%20ai/teslafire_openai_feed.txt
+- CSV: https://data.teslafire.com/open%20ai/teslafire_openai_feed.csv
+- JSONL (SFTP / API): https://data.teslafire.com/open%20ai/teslafire_openai_feed.jsonl
 
 ## Feed settings
 - 153 products, seller `Tesla Fire Systems LLC`
@@ -17,7 +19,10 @@ Product feed for OpenAI Ads Manager (US), built from the live WooCommerce catalo
 - Return policy: https://teslafire.com/refund_returns/ · Privacy: https://teslafire.com/privacy-policy/
 
 ## Upload
-Ads Manager → Tools → Feeds → Create Feed → connect via SFTP → upload the `.jsonl` file.
-OpenAI treats each upload as the full catalog; refresh at least daily.
+Ads Manager → Tools → Feeds → open the feed's ⋮ menu:
+- **Hosted URL** (best — Ads Manager re-fetches it, and this repo rebuilds it daily): paste `https://data.teslafire.com/open%20ai/teslafire_openai_feed.tsv`
+- **Upload CSV or TXT**: upload `teslafire_openai_feed.txt` (or `.csv`)
+
+Ads Manager does not accept the `.jsonl` file in its upload box; JSONL is for SFTP/API delivery only.
 
 Spec: https://developers.openai.com/commerce/specs/file-upload/products
