@@ -11,8 +11,8 @@ name: Update feeds
 
 on:
   schedule:
-    - cron: "47 8,15,21 * * *"   # backup checks: ~3:47 AM, ~10:47 AM, ~4:47 PM Toronto (EST)
-    - cron: "11 10 * * 1"   # backup weekly forced refresh, Mondays ~5:11 AM Toronto (EST)
+    - cron: "47 3,4,15,21 * * *"   # backup: ~10:47 PM & ~11:47 PM EST (deadline 12:00 AM EST), plus ~10:47 AM & ~4:47 PM
+    - cron: "11 4 * * 1"   # backup weekly forced refresh: Sundays ~11:11 PM EST
   workflow_dispatch:
     inputs:
       force:
@@ -47,7 +47,7 @@ jobs:
 
       - name: Rebuild feeds from the live store
         env:
-          FORCE: ${{ (github.event.schedule == '11 10 * * 1' || inputs.force) && '1' || '0' }}
+          FORCE: ${{ (github.event.schedule == '11 4 * * 1' || inputs.force) && '1' || '0' }}
         run: node scripts/build-feeds.mjs
 
       - name: Commit and publish if anything changed
