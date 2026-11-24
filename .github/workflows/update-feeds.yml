@@ -1,13 +1,18 @@
 name: Update feeds
 
-# Crawls the store every day and republishes the feeds when anything changed
+# Crawls the store and republishes the feeds when anything changed
 # (price, sale price, stock, title, description, images, new or removed products).
-# Every Monday it also runs a forced weekly refresh.
+#
+# PRIMARY trigger: the Cloudflare Worker "skgroups-monitor-scheduler" (SK GROUPS account)
+# starts this on time at 3:17am, 10:17am and 4:17pm Toronto daily, plus a forced weekly
+# refresh Mondays at 4:41am Toronto.
+# SILENT BACKUP: the GitHub crons below run ~30 minutes later. A second run finds
+# "No changes" and does nothing, so nothing is duplicated.
 
 on:
   schedule:
-    - cron: "17 8,15,21 * * *"   # three checks a day: ~3:17 AM, ~10:17 AM, ~4:17 PM Toronto
-    - cron: "41 9 * * 1"   # weekly forced refresh, Mondays ~4:41 AM Toronto
+    - cron: "47 8,15,21 * * *"   # backup checks: ~3:47 AM, ~10:47 AM, ~4:47 PM Toronto (EST)
+    - cron: "11 10 * * 1"   # backup weekly forced refresh, Mondays ~5:11 AM Toronto (EST)
   workflow_dispatch:
     inputs:
       force:
@@ -42,7 +47,7 @@ jobs:
 
       - name: Rebuild feeds from the live store
         env:
-          FORCE: ${{ (github.event.schedule == '41 9 * * 1' || inputs.force) && '1' || '0' }}
+          FORCE: ${{ (github.event.schedule == '11 10 * * 1' || inputs.force) && '1' || '0' }}
         run: node scripts/build-feeds.mjs
 
       - name: Commit and publish if anything changed
